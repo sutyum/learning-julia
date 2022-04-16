@@ -15,17 +15,17 @@ using Latexify
 t = 0:Δt:1
 x = 0:Δx:5
 
-func = :(u(x, t) = 15 * exp(sin(2π * t)))
+func = :(u(x, t) = 15 * exp(sin(π * x * t)))
 eval(func)
 
 latexify(func) |> render
 
-# surface(t, x, u, xaxis="t [sec]", yaxis="x [m]", zaxis="T [°C]")
-contour(
-  t, x, u,
-  levels=10,
-  fill=true,
-  xaxis="t [sec]",
-  yaxis="x [m]",
-  zaxis="T [°C]"
-)
+threshold = 20;
+v(x, t) = (u(x, t) > threshold) * threshold
+
+plt = surface(t, x, u, xaxis="t [sec]", yaxis="x [m]", zaxis="T [°C]")
+wireframe!(t, x, v, transparency=true)
+
+contour(t, x, u, levels=5, fill=true, xaxis="t [sec]", yaxis="x [m]", zaxis="T [°C]")
+
+savefig(plt, "plt.png")
